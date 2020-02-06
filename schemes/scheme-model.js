@@ -22,16 +22,39 @@ function findSteps(id) {
         .where({ scheme_id: id });
 }
 
-function add(newData) {
+function add(newScheme){
     return db('schemes')
-        .insert(newData)
-        .then(id => findById(id[0]));
-};
+    .insert(newScheme)
+    .then(ids => {
+        const [id] = ids
+        return findById(id)
+    } )
+}
 
+function update(changes, id) {
+    return db('schemes')
+      .where({ id })
+      .update(changes)
+      .then(scheme => {
+        return findById(id);
+      });
+}
 
+function remove(id) {
+    return db('schemes')
+    .where('id', id)
+    .del()
+}
+
+function addStep(step, id) {
+    return db("steps").insert(step).where({scheme_id : id});
+}
 module.exports = {
     find,
     findById,
     add,
-    findSteps
+    findSteps,
+    update,
+    remove,
+    addStep
 };
